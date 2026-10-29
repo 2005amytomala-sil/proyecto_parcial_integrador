@@ -19,6 +19,8 @@ TARGET = "label"                                  # 0 = normal, 1 = ataque
 CAT_COLS = ["proto", "service", "state"]
 # Columnas que NUNCA son predictores: identificador y variables que revelan la respuesta.
 NO_PREDICTORAS = ["id", "attack_cat", "label"]
+# Decision del equipo: ct_ftp_cmd es identica a is_ftp_login (correlacion 1.000) -> se excluye.
+COLUMNAS_REDUNDANTES = ["ct_ftp_cmd"]
 
 
 def cargar_datos(ruta_train: str, ruta_test: str) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -34,11 +36,22 @@ def separar_xy(df: pd.DataFrame):
     return X, y, cat_ataque
 
 
-def columnas_por_tipo(X: pd.DataFrame) -> tuple[list[str], list[str]]:
-    """Separa columnas numericas y categoricas (proto, service, state)."""
+def columnas_por_tipo(X: pd.DataFrame, excluir: list[str] | tuple = ()) -> tuple[list[str], list[str]]:
+    """Separa columnas numericas y categoricas (proto, service, state).
+
+    `excluir` quita columnas del Pipeline (p. ej. COLUMNAS_REDUNDANTES). Como el
+    ColumnTransformer usa remainder="drop", el Pipeline entrenado ignora esas columnas
+    aunque el registro nuevo las traiga (util para el prototipo).
+    """
     cat = [c for c in CAT_COLS if c in X.columns]
-    num = [c for c in X.columns if c not in cat]
+    num = [c for c in X.columns if c not in cat and c not in excluir]
     return num, cat
+
+
+def eliminar_duplicados(df: pd.DataFrame) -> pd.DataFrame:
+    """Elimina duplicados (ignorando id y attack_cat). Usar SOLO en entrenamiento."""
+    feat = [c for c in df.columns if c not in ("id", "attack_cat", "label")]
+    return df.drop_duplicates(subset=feat + ["label"]).reset_index(drop=True)
 
 
 def detectar_columnas_log(X_train: pd.DataFrame, num_cols: list[str],

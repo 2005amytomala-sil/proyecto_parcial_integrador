@@ -1,0 +1,6 @@
+Modelo,Hiperparámetros,F1,Precisión,Recall,ROC-AUC,Exactitud,Entrenamiento (s/pliegue),Inferencia (ms/1000 reg.)
+Dummy (línea base),strategy=most_frequent,0.0000 ± 0.0000,0.0000 ± 0.0000,0.0000 ± 0.0000,0.5000 ± 0.0000,0.5124 ± 0.0000,0.22,4.7
+KNN,"n_neighbors=5, weights=uniform, p=2",0.9045 ± 0.0055,0.8914 ± 0.0062,0.9180 ± 0.0057,0.9654 ± 0.0036,0.9055 ± 0.0055,0.25,211.9
+SVM,"kernel=rbf, C=1.0, gamma=scale",0.9088 ± 0.0054,0.8514 ± 0.0074,0.9747 ± 0.0033,0.9719 ± 0.0022,0.9046 ± 0.0060,10.91,470.4
+Random Forest,"n_estimators=200, max_depth=None, min_samples_leaf=1",0.9233 ± 0.0046,0.9035 ± 0.0062,0.9441 ± 0.0048,0.9821 ± 0.0021,0.9236 ± 0.0047,8.04,32.3
+MLP,"hidden_layer_sizes=(64, 32), activation=relu, alpha=0.0001, learning_rate_init=0.001, early_stopping=True, max_iter=200",0.9116 ± 0.0020,0.8875 ± 0.0129,0.9373 ± 0.0128,0.9765 ± 0.0017,0.9114 ± 0.0027,6.48,7.9
