@@ -1,0 +1,46 @@
+﻿nombre,tipo_en_CSV,descripcion_funcional,rol_propuesto,justificacion_notas
+id,int64,Identificador del registro dentro del archivo.,Identificación; excluida,No describe el comportamiento del tráfico y puede inducir aprendizaje de patrones del orden o del identificador.
+dur,float64,Duración total del flujo o conexión.,Predictora,Característica temporal del tráfico.
+proto,object,Protocolo de red utilizado por la conexión.,Predictora,Variable categórica del protocolo.
+service,object,"Servicio asociado al flujo, cuando puede identificarse.",Predictora,Variable categórica del servicio.
+state,object,Estado de la conexión según la información registrada por el generador de características.,Predictora,Variable categórica del estado del flujo.
+spkts,int64,Cantidad de paquetes en la dirección de origen hacia destino.,Predictora,Característica de volumen del tráfico.
+dpkts,int64,Cantidad de paquetes en la dirección de destino hacia origen.,Predictora,Característica de volumen del tráfico.
+sbytes,int64,Cantidad de bytes enviados desde origen hacia destino.,Predictora,Característica de volumen del tráfico.
+dbytes,int64,Cantidad de bytes enviados desde destino hacia origen.,Predictora,Característica de volumen del tráfico.
+rate,float64,Tasa de paquetes del flujo según la definición del conjunto.,Predictora,Característica de intensidad del tráfico; verificar la fórmula exacta en el diccionario oficial.
+sttl,int64,Valor TTL (time to live) observado en paquetes de origen.,Predictora,Característica de cabecera de red.
+dttl,int64,Valor TTL (time to live) observado en paquetes de destino.,Predictora,Característica de cabecera de red.
+sload,float64,Carga o tasa de bits desde origen hacia destino.,Predictora,Característica de intensidad del tráfico; verificar unidades exactas en la documentación oficial.
+dload,float64,Carga o tasa de bits desde destino hacia origen.,Predictora,Característica de intensidad del tráfico; verificar unidades exactas en la documentación oficial.
+sloss,int64,Cantidad de paquetes perdidos en la dirección de origen.,Predictora,Indicador de pérdidas en el flujo.
+dloss,int64,Cantidad de paquetes perdidos en la dirección de destino.,Predictora,Indicador de pérdidas en el flujo.
+sinpkt,float64,Tiempo medio entre paquetes en la dirección de origen.,Predictora,Característica temporal.
+dinpkt,float64,Tiempo medio entre paquetes en la dirección de destino.,Predictora,Característica temporal.
+sjit,float64,Variación temporal (jitter) entre paquetes en la dirección de origen.,Predictora,Característica temporal.
+djit,float64,Variación temporal (jitter) entre paquetes en la dirección de destino.,Predictora,Característica temporal.
+swin,int64,Valor de ventana TCP asociado a la dirección de origen.,Predictora,Característica de conexión TCP.
+stcpb,int64,Valor base del número de secuencia TCP asociado a origen.,Predictora,Característica TCP; revisar su interpretación y posible dependencia del entorno.
+dtcpb,int64,Valor base del número de secuencia TCP asociado a destino.,Predictora,Característica TCP; revisar su interpretación y posible dependencia del entorno.
+dwin,int64,Valor de ventana TCP asociado a la dirección de destino.,Predictora,Característica de conexión TCP.
+tcprtt,float64,Tiempo de ida y vuelta TCP registrado para la conexión.,Predictora,Característica temporal de TCP.
+synack,float64,Tiempo asociado al intercambio SYN-ACK durante el establecimiento TCP.,Predictora,Característica temporal de establecimiento de conexión.
+ackdat,float64,Tiempo entre el ACK y los datos según la definición de la característica.,Predictora,Característica temporal; confirmar definición exacta en la ficha oficial.
+smean,int64,Tamaño medio de los paquetes en la dirección de origen.,Predictora,Estadística del tamaño de paquetes.
+dmean,int64,Tamaño medio de los paquetes en la dirección de destino.,Predictora,Estadística del tamaño de paquetes.
+trans_depth,int64,Profundidad de transacción HTTP registrada por el extractor de características.,Predictora,Característica de contenido/transacción; puede no aplicar a todos los servicios.
+response_body_len,int64,Longitud del cuerpo de respuesta registrada por el extractor.,Predictora,Característica de contenido/transacción; puede no aplicar a todos los servicios.
+ct_srv_src,int64,Conteo de conexiones al mismo servicio desde el origen según la ventana definida por el dataset.,Predictora,Característica agregada de conexiones; consultar la definición exacta del dataset.
+ct_state_ttl,int64,Conteo asociado a combinaciones de estado y TTL según la definición del dataset.,Predictora,Característica agregada de conexiones.
+ct_dst_ltm,int64,Conteo de conexiones recientes relacionadas con el destino.,Predictora,Característica agregada; la ventana exacta depende de la definición original.
+ct_src_dport_ltm,int64,Conteo de conexiones recientes con el mismo origen y puerto de destino.,Predictora,Característica agregada de conexiones.
+ct_dst_sport_ltm,int64,Conteo de conexiones recientes con el mismo destino y puerto de origen.,Predictora,Característica agregada de conexiones.
+ct_dst_src_ltm,int64,Conteo de conexiones recientes entre el mismo destino y origen.,Predictora,Característica agregada de conexiones.
+is_ftp_login,int64,Indicador o valor codificado relacionado con la autenticación FTP.,Predictora,Se conserva como predictor; verificar los valores y la definición exacta en la ficha oficial.
+ct_ftp_cmd,int64,Conteo de comandos FTP identificado por el extractor de características.,Excluida provisionalmente,"Es idéntica a is_ftp_login en el entrenamiento revisado, pero difiere en prueba; documentar y verificar antes de cerrar la decisión."
+ct_flw_http_mthd,int64,Conteo de métodos HTTP detectados en el flujo.,Predictora,Característica agregada relacionada con HTTP.
+ct_src_ltm,int64,Conteo de conexiones recientes asociadas al origen.,Predictora,Característica agregada de conexiones.
+ct_srv_dst,int64,Conteo de conexiones al mismo servicio asociadas al destino.,Predictora,Característica agregada de conexiones.
+is_sm_ips_ports,int64,"Indicador de si las direcciones IP y los puertos de origen y destino son iguales, según la definición del dataset.",Predictora,Indicador codificado de una característica del flujo.
+attack_cat,object,"Categoría detallada del tráfico, por ejemplo Normal, Generic o Exploits.",Etiqueta descriptiva; excluida de X,Se excluye para evitar usar directamente la categoría detallada al predecir label.
+label,int64,Etiqueta binaria: 0 para tráfico normal y 1 para tráfico de ataque.,Objetivo (y),Variable que se busca predecir.
