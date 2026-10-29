@@ -1,0 +1,31 @@
+Filas: 175341  Columnas: 45
+Valores faltantes totales: 0
+Registros duplicados (sin contar id): 67601
+
+Distribución de la variable objetivo (label):
+label
+Ataque    119341
+Normal     56000
+
+Proporción:
+label
+Ataque    68.06
+Normal    31.94
+
+Tipos de dato:
+int64      30
+float64    11
+str         4
+
+Categorías de ataque:
+attack_cat
+Normal            56000
+Generic           40000
+Exploits          33393
+Fuzzers           18184
+DoS               12264
+Reconnaissance    10491
+Analysis           2000
+Backdoor           1746
+Shellcode          1133
+Worms               130
