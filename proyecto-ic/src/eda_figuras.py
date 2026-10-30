@@ -40,10 +40,16 @@ def guardar(fig, salida: Path, nombre: str) -> None:
 def resumen_texto(df: pd.DataFrame, salida: Path) -> None:
     """Datos para la sección de calidad de datos del informe."""
     sin_id = df.drop(columns=[c for c in ["id"] if c in df.columns])
+    # Criterio del Pipeline (preprocesamiento.eliminar_duplicados): variables + label,
+    # ignorando id y attack_cat. Es el que usa el equipo para limpiar el entrenamiento.
+    predictoras = [c for c in df.columns if c not in ("id", "attack_cat", "label")]
+    dup_pipeline = int(df.duplicated(subset=predictoras + ["label"]).sum())
     lineas = [
         f"Filas: {len(df)}  Columnas: {df.shape[1]}",
         f"Valores faltantes totales: {int(df.isna().sum().sum())}",
-        f"Registros duplicados (sin contar id): {int(sin_id.duplicated().sum())}",
+        f"Duplicados, criterio estricto (todas las columnas salvo id): {int(sin_id.duplicated().sum())}",
+        f"Duplicados, criterio del Pipeline (variables + label; ignora id y attack_cat): {dup_pipeline}"
+        f" ({dup_pipeline / len(df):.2%})",
         "",
         "Distribución de la variable objetivo (label):",
         df["label"].map(ETIQUETAS).value_counts().to_string(),
@@ -130,6 +136,7 @@ def fig_correlacion(df: pd.DataFrame, salida: Path) -> None:
     sns.barplot(x=corr_label.head(15).values, y=corr_label.head(15).index, ax=ejes[0])
     ejes[0].set_title("Correlación de cada variable con label (15 mayores)")
     ejes[0].set_xlabel("Correlación de Pearson")
+    ejes[0].set_ylabel("")
     sns.heatmap(numericas[top + ["label"]].corr(), annot=True, fmt=".2f",
                 cmap="coolwarm", center=0, ax=ejes[1], annot_kws={"size": 7})
     ejes[1].set_title("Matriz de correlación (12 variables más ligadas a label)")
