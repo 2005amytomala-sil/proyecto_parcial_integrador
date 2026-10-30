@@ -1,0 +1,11 @@
+categoria,registros,detectados_como_ataque,proporcion_marcada_ataque
+Normal,37000,9968,0.2694
+Generic,18871,18869,0.9999
+Exploits,11132,11092,0.9964
+Fuzzers,6062,5496,0.9066
+DoS,4089,4086,0.9993
+Reconnaissance,3496,3495,0.9997
+Analysis,677,675,0.997
+Backdoor,583,583,1.0
+Shellcode,378,375,0.9921
+Worms,44,44,1.0

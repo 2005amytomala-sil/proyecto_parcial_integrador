@@ -1,0 +1,9 @@
+,Prueba
+F1 (ataque),0.8942
+Precisión,0.8177
+Recall,0.9864
+ROC-AUC,0.9823
+Exactitud,0.8714
+Falsos negativos,617.0
+Falsos positivos,9968.0
+Inferencia (ms/1000 reg.),12.1401

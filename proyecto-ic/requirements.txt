@@ -1,5 +1,8 @@
-numpy==2.5.4
-pandas==3.1.0
-matplotlib==3.11.2
-seaborn==0.13.2
-scikit-learn==1.9.1
+# Versiones usadas en las corridas de Google Colab (01_eda, 02_modelos, 04_modelo_final).
+# Instala exactamente estas para que el .joblib cargue sin problemas en el prototipo.
+scikit-learn==1.6.1
+pandas==2.2.3
+numpy==2.1.3
+joblib
+matplotlib
+streamlit
