@@ -5,6 +5,8 @@ Proyecto integrador de Inteligencia Computacional. Clasificación binaria de tr�
 un algoritmo genético y un prototipo en Streamlit.
 
 > Prototipo académico. No sustituye un sistema de seguridad en producción.
+**Prototipo en línea:**
+ https://detector-intrusiones-unsw.streamlit.app (también se puede ejecutar en local con el comando de abajo).
 
 ## Estructura
 

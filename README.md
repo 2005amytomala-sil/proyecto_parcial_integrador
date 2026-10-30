@@ -1,5 +1,7 @@
 ﻿# Detector de intrusiones de red (UNSW-NB15)
 
+**Prototipo en línea:** https://detector-intrusiones-unsw.streamlit.app
+
 Proyecto integrador de Inteligencia Computacional: clasificación binaria de tráfico de red,
 optimización con algoritmo genético y prototipo en Streamlit.
 
