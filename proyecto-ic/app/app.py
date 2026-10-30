@@ -544,7 +544,6 @@ st.header("1. Cargar datos de tráfico")
 
 st.write(
     "Selecciona un archivo CSV que contenga registros de tráfico de red. "
-    "Podrás revisar sus datos aunque el modelo final todavía no esté disponible."
 )
 
 archivo = st.file_uploader(
