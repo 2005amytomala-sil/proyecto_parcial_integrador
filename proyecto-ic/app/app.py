@@ -5,7 +5,9 @@ Cuando exista models/pipeline_final.joblib, la aplicación podrá utilizarlo par
 """
 
 from pathlib import Path
-
+import numpy as np
+from sklearn.metrics import (accuracy_score, confusion_matrix, f1_score,
+                             precision_score, recall_score)
 import joblib
 import pandas as pd
 import streamlit as st
@@ -25,6 +27,283 @@ st.set_page_config(
     page_title="Detector de intrusiones | UNSW-NB15",
     page_icon="🛡️",
     layout="wide",
+)
+
+st.markdown(
+    """
+    <style>
+    :root {
+        --lila-oscuro: #5b3b91;
+        --lila: #7956b5;
+        --lila-claro: #e8e1f4;
+        --tinta: #29243b;
+    }
+
+    .stApp {
+        background:
+            radial-gradient(ellipse at 8% 5%, rgba(255, 255, 255, 0.62) 0, transparent 30rem),
+            radial-gradient(ellipse at 94% 80%, rgba(160, 143, 209, 0.35) 0, transparent 34rem),
+            linear-gradient(135deg, #c4d9f2 0%, #d8d8f0 48%, #cbd9ee 100%);
+        color: var(--tinta);
+    }
+
+    [data-testid="stHeader"] {
+        position: relative !important;
+        top: auto !important;
+        z-index: 1;
+        height: 3rem;
+        background: rgba(205, 218, 239, 0.76);
+    }
+
+    [data-testid="stMainBlockContainer"] {
+        width: 100% !important;
+        max-width: none !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    .block-container {
+        width: min(97vw, 1600px) !important;
+        max-width: 1600px !important;
+        box-sizing: border-box;
+        margin: 1.5rem auto 2.5rem !important;
+        padding: 2.1rem 2.4rem 3.2rem;
+        border: 1px solid rgba(203, 184, 231, 0.55);
+        border-radius: 26px;
+        background: linear-gradient(145deg, #29263d 0%, #332c49 58%, #29263d 100%);
+        box-shadow:
+            0 24px 70px rgba(48, 57, 91, 0.19),
+            0 5px 16px rgba(72, 59, 111, 0.10),
+            inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .block-container h1,
+    .block-container h2,
+    .block-container h3 {
+        color: #f7f1ff !important;
+        letter-spacing: -0.025em;
+    }
+
+    .block-container h1 {
+        text-align: center;
+        padding-bottom: 0.7rem;
+        border-bottom: 3px solid #9275bd;
+    }
+
+    h2, h3 {
+        margin-top: 1.2rem;
+    }
+
+    [data-testid="stCaptionContainer"] {
+        color: #c4b8d8;
+        text-align: center;
+    }
+
+    .block-container [data-testid="stMarkdownContainer"] p,
+    .block-container label,
+    .block-container [data-testid="stCaptionContainer"] {
+        color: #eee7f8 !important;
+    }
+
+    .block-container [data-testid="stMetric"] {
+        min-height: 112px;
+        background: linear-gradient(145deg, #fff 0%, #f0eafa 100%);
+        border: 1px solid #c9b5e5;
+        border-radius: 18px;
+        padding: 1.15rem 1.25rem;
+        box-shadow:
+            0 14px 28px rgba(8, 7, 18, 0.28),
+            0 4px 10px rgba(8, 7, 18, 0.18),
+            inset 0 1px 0 rgba(255, 255, 255, 0.95);
+        transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .block-container [data-testid="stMetric"]:hover {
+        transform: translateY(-2px);
+        box-shadow:
+            0 18px 34px rgba(8, 7, 18, 0.32),
+            0 5px 12px rgba(8, 7, 18, 0.20),
+            inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+
+    .block-container [data-testid="stMetricLabel"],
+    .block-container [data-testid="stMetricLabel"] *,
+    .block-container [data-testid="stMetricValue"],
+    .block-container [data-testid="stMetricValue"] * {
+        color: #563786 !important;
+    }
+
+    .block-container [data-testid="stMetricValue"] {
+        font-weight: 700;
+    }
+
+    .stButton > button,
+    [data-testid="stDownloadButton"] > button {
+        border-radius: 10px;
+        border: 1px solid #cbbbe3;
+        color: var(--lila-oscuro);
+        background: linear-gradient(145deg, #fff, #f1ebfa);
+        font-weight: 600;
+        transition: all 160ms ease;
+        box-shadow: 0 4px 10px rgba(72, 53, 112, 0.08);
+    }
+
+    .stButton > button:hover,
+    [data-testid="stDownloadButton"] > button:hover {
+        border-color: var(--lila);
+        color: #56318f;
+        box-shadow: 0 4px 14px rgba(104, 65, 165, 0.14);
+    }
+
+    .stButton > button[kind="primary"] {
+        color: #fff;
+        border-color: var(--lila-oscuro);
+        background: linear-gradient(135deg, #8261bc, #5b3b91);
+        box-shadow: 0 7px 16px rgba(91, 59, 145, 0.24);
+    }
+
+    .stButton > button[kind="primary"]:hover {
+        color: #fff;
+        border-color: #56318f;
+        background: linear-gradient(135deg, #7952b8, #56318f);
+    }
+
+    [data-testid="stFileUploader"] section {
+        border: 1px dashed #a992ce;
+        border-radius: 16px;
+        background: linear-gradient(145deg, #f7f3fc, #eaf1fa);
+        box-shadow: inset 0 1px 5px rgba(77, 68, 109, 0.07);
+        color: #403650 !important;
+    }
+
+    [data-testid="stFileUploader"] section *,
+    [data-testid="stFileUploader"] label,
+    [data-testid="stFileUploader"] small {
+        color: #403650 !important;
+    }
+
+    [data-testid="stFileUploader"] section button {
+        color: #fff !important;
+        border: 1px solid #5b3b91 !important;
+        border-radius: 9px !important;
+        background: linear-gradient(135deg, #8261bc, #5b3b91) !important;
+        box-shadow: 0 4px 10px rgba(91, 59, 145, 0.2);
+    }
+
+    [data-testid="stFileUploader"] section button:hover {
+        border-color: #43286f !important;
+        background: linear-gradient(135deg, #7350ae, #4d307f) !important;
+    }
+
+    [data-testid="stFileUploader"] section:hover {
+        border-color: var(--lila);
+        background: #eee8f8;
+    }
+
+    .block-container [data-testid="stAlert"] {
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(50, 59, 91, 0.08);
+    }
+
+    .block-container [data-testid="stAlert"] [data-testid="stMarkdownContainer"],
+    .block-container [data-testid="stAlert"] [data-testid="stMarkdownContainer"] p {
+        color: #26354a !important;
+    }
+
+    .block-container [data-testid="stDataFrame"] {
+        overflow: hidden;
+        border: 1px solid #c9b5e5;
+        border-radius: 14px;
+        box-shadow:
+            0 12px 26px rgba(8, 7, 18, 0.25),
+            0 3px 8px rgba(8, 7, 18, 0.16);
+    }
+
+    .block-container [data-testid="stExpander"] {
+        border: 1px solid #c9b5e5;
+        border-radius: 12px;
+        background: linear-gradient(145deg, #fff, #f0ebf8);
+        box-shadow:
+            0 10px 22px rgba(8, 7, 18, 0.23),
+            0 3px 7px rgba(8, 7, 18, 0.15);
+    }
+
+    .block-container [data-testid="stExpander"] [data-testid="stMarkdownContainer"] p {
+        color: #403650 !important;
+    }
+
+    .block-container [data-testid="stMetric"] [data-testid="stMetricLabel"] *,
+    .block-container [data-testid="stMetric"] [data-testid="stMetricValue"] *,
+    .block-container [data-testid="stMetric"] label {
+        color: #4b316f !important;
+        opacity: 1 !important;
+        -webkit-text-fill-color: #4b316f !important;
+    }
+
+    .block-container [data-testid="stAlert"],
+    .block-container [data-testid="stAlert"] [role="alert"] {
+        color: #26354a !important;
+        background: #e6edf8 !important;
+        border-color: #c2d2e9 !important;
+    }
+
+    .block-container [data-testid="stAlert"] *,
+    .block-container [data-testid="stAlert"] [role="alert"] * {
+        color: #26354a !important;
+        opacity: 1 !important;
+        -webkit-text-fill-color: #26354a !important;
+    }
+
+    .block-container [data-testid="stExpander"] summary,
+    .block-container [data-testid="stExpander"] summary * {
+        color: #403650 !important;
+        opacity: 1 !important;
+        -webkit-text-fill-color: #403650 !important;
+    }
+
+    .block-container .stButton > button,
+    .block-container .stButton > button *,
+    .block-container [data-testid="stDownloadButton"] > button,
+    .block-container [data-testid="stDownloadButton"] > button * {
+        color: #563786 !important;
+        opacity: 1 !important;
+        -webkit-text-fill-color: #563786 !important;
+    }
+
+    .block-container .stButton > button[kind="primary"],
+    .block-container .stButton > button[kind="primary"] *,
+    .block-container [data-testid="stFileUploader"] section button,
+    .block-container [data-testid="stFileUploader"] section button * {
+        color: #fff !important;
+        -webkit-text-fill-color: #fff !important;
+    }
+
+    div[data-baseweb="slider"] [role="slider"] {
+        background-color: var(--lila-oscuro);
+        border-color: var(--lila-oscuro);
+    }
+
+    hr {
+        border-color: #67577f;
+    }
+
+    @media (max-width: 700px) {
+        [data-testid="stMainBlockContainer"] {
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+        }
+
+        .block-container {
+            width: calc(100vw - 1rem) !important;
+            max-width: none !important;
+            margin: 0.75rem auto 1.5rem !important;
+            padding: 1.35rem 1.1rem 2rem;
+            border-radius: 18px;
+        }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
 )
 
 
@@ -177,7 +456,7 @@ def validar_datos_csv(df: pd.DataFrame) -> dict:
         "columnas_con_infinitos": {},
         "columnas_numericas_con_texto": {},
         "label_invalida": [],
-        "duplicados": int(df.duplicated().sum()),
+        "duplicados": int(df.drop(columns=["id"], errors="ignore").duplicated().sum()),
     }
 
     # 1. Detectar valores faltantes.
@@ -777,6 +1056,31 @@ else:
                         use_container_width=True,
                         hide_index=True,
                     )
+
+                    if (TARGET in df.columns
+                            and not validacion["label_invalida"]
+                            and not df[TARGET].isna().any()):
+
+                        y_real = pd.to_numeric(df[TARGET]).astype(int).to_numpy()
+                        y_pred = np.asarray(predicciones).astype(int)
+
+                        st.subheader("Comparación con la etiqueta real (label)")
+
+                        c1, c2, c3, c4 = st.columns(4)
+                        c1.metric("Exactitud", f"{accuracy_score(y_real, y_pred):.3f}")
+                        c2.metric("Precisión", f"{precision_score(y_real, y_pred, zero_division=0):.3f}")
+                        c3.metric("Recall", f"{recall_score(y_real, y_pred, zero_division=0):.3f}")
+                        c4.metric("F1", f"{f1_score(y_real, y_pred, zero_division=0):.3f}")
+
+                        matriz = confusion_matrix(y_real, y_pred, labels=[0, 1])
+                        st.dataframe(
+                            pd.DataFrame(
+                                matriz,
+                                index=["Real: normal", "Real: ataque"],
+                                columns=["Predicho: normal", "Predicho: ataque"],
+                            ),
+                            use_container_width=True,
+                        )
 
                     # --------------------------------------------
                     # 8. Descargar resultados

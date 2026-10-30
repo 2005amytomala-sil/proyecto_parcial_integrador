@@ -1,0 +1,41 @@
+== ENTORNO ==
+python 3.13.0 | sklearn 1.6.1 | pandas 2.2.3 | numpy 2.1.3 | joblib 1.6.0
+Modelo: models\pipeline_final.joblib | 13.6 MB (GitHub bloquea >100 MB)
+Tipo: Pipeline | pasos: ['pre', 'modelo']
+Estimador: RandomForestClassifier(max_depth=20, max_features=0.3, n_estimators=150,
+                       n_jobs=-1, random_state=42)
+classes_: [np.int64(0), np.int64(1)]
+Columnas de entrada esperadas: 42
+  contiene id/label/attack_cat?: []
+
+== PRUEBA COMPLETA (82332 filas) ==
+Inferencia: 0.7 s (0.008 ms/registro)
+Real: 45332 ataques (55.06%) | Predicho: 54683 ataques (66.42%)
+accuracy=0.8714 precision=0.8177 recall=0.9864 F1=0.8942 ROC-AUC=0.9823
+Matriz: VN=27032 FP=9968 FN=617 VP=44715  (tasa de falsos positivos 26.94%)
+
+Recall de deteccion por categoria (porcentaje detectado como ataque):
+attack_cat
+Normal             26.9
+Fuzzers            90.7
+Shellcode          99.2
+Exploits           99.6
+Analysis           99.7
+DoS                99.9
+Generic           100.0
+Backdoor          100.0
+Reconnaissance    100.0
+Worms             100.0
+
+Niveles de confianza con umbrales de la app (0.65 / 0.85):
+Alta     64395
+Media     9167
+Baja      8770
+
+== CASOS DE PRUEBA (como en el prototipo) ==
+  Normal  (real 0): prob_ataque = 0.784
+  Ataque  (real 1): prob_ataque = 0.982
+  [OK]   limite: categorias nunca vistas: 0.841
+  [OK]   limite: valor faltante (NaN): 0.964
+  [OK]   limite: valores extremos: 0.97
+  [FALLA] falta una columna (debe FALLAR; la app lo avisa antes): ValueError: columns are missing: {'dur'}
