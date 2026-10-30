@@ -1,0 +1,10 @@
+# Versiones utilizadas para entrenar el modelo final
+scikit-learn==1.6.1
+pandas==2.2.3
+numpy==2.1.3
+
+# Dependencias del prototipo Streamlit
+joblib
+matplotlib
+seaborn
+streamlit
