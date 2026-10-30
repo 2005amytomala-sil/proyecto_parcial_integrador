@@ -1,6 +1,7 @@
 Filas: 175341  Columnas: 45
 Valores faltantes totales: 0
-Registros duplicados (sin contar id): 67601
+Duplicados, criterio estricto (todas las columnas salvo id): 67601
+Duplicados, criterio del Pipeline (variables + label; ignora id y attack_cat): 74072 (42.24%)
 
 Distribución de la variable objetivo (label):
 label
